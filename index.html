@@ -102,14 +102,14 @@ nav button.on span{background:color-mix(in srgb,var(--acc) 18%,transparent)}
 // Real app: set this to your raw GitHub link, e.g.
 // https://raw.githubusercontent.com/YOURNAME/YOURREPO/main/usernames.json
 const DATA_URL="usernames.json";
-const ICONS={Bank:"🏦",Shop:"🛍️",Bird:"🐦",Others:"✨"};
+const ICONS={Bank:"🏦",Shop:"🛍️",Bird:"🐦",Job:"💼",AI:"🤖","Bet Site":"🎲","6 Letter":"6️⃣",Others:"✨"};
 const GR=[["#2e9d6a","#14684a"],["#0d9488","#115e59"],["#0284c7","#075985"],["#65a30d","#3f6212"],["#d97706","#92400e"],["#e0526b","#9f1239"],["#7c5cd6","#4c2fa0"],["#0e8f8f","#0b5e6b"]];
 const hash=s=>{let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))>>>0;return h};
 const $=s=>document.querySelector(s);
 const tg=window.Telegram&&window.Telegram.WebApp;
 if(tg){try{tg.ready();tg.expand()}catch(e){}}
 const LET=[..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
-const SPD=["Bank","Shop","Bird","Others"];let DATA={},KEYS=[...LET,...SPD],ALL=[];KEYS.forEach(k=>{DATA[k]=[]});
+const SPD=["Bank","Shop","Bird","Job","AI","Bet Site","6 Letter","Others"];let DATA={},KEYS=[...LET,...SPD],ALL=[];KEYS.forEach(k=>{DATA[k]=[]});
 const S={tab:"home",cat:null,q:"",err:false,wish:new Set(),cart:new Set()};
 
 async function load(){
