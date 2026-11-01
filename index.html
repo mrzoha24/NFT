@@ -7,9 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#edf6f0;--card:#fff;--text:#12281d;--mut:#5f7a6b;--acc:#1f8f5f;--accT:#fff;--line:#d6e8dc;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a1511;--card:#12241c;--text:#e8f4ec;--mut:#8fb09d;--acc:#5fd39a;--accT:#06251a;--line:#1e3a2d;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0a1511;--card:#12241c;--text:#e8f4ec;--mut:#8fb09d;--acc:#5fd39a;--accT:#06251a;--line:#1e3a2d;color-scheme:dark}
+:root{--bg:#fff;--card:#fff;--text:#12281d;--mut:#5f7a6b;--acc:#1f8f5f;--accT:#fff;--line:#d6e8dc;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box;margin:0}
 html,body{height:100%}
 body{background:var(--bg);color:var(--text);font-family:"Space Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-tap-highlight-color:transparent}
@@ -17,10 +15,12 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;transi
 button:active,.buy:active,.tile:active,.cta:active{transform:scale(.95)}
 a{color:inherit;text-decoration:none;transition:transform .15s ease}
 button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
-#app{height:100%;max-width:480px;margin:0 auto;display:flex;flex-direction:column;background:var(--bg)}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(420px 300px at 92% 6%,rgba(82,191,142,.2),transparent 70%),radial-gradient(380px 320px at 4% 52%,rgba(125,211,252,.2),transparent 70%),radial-gradient(360px 300px at 84% 96%,rgba(253,224,71,.16),transparent 70%)}
+#app{position:relative;z-index:1;height:100%;max-width:480px;margin:0 auto;display:flex;flex-direction:column}
 header{padding:14px 16px 10px;display:flex;align-items:center;gap:10px}
 header h1{font-size:21px;font-weight:700;flex:1}
-.back{width:36px;height:36px;border-radius:50%;background:var(--card);border:1px solid var(--line);font-size:19px}
+.back,.eye{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.65);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(31,143,95,.2);font-size:19px;color:var(--text);box-shadow:0 6px 14px -8px rgba(23,115,79,.5);display:flex;align-items:center;justify-content:center}
+.eye{color:var(--acc)}.eye svg{width:20px;height:20px}
 main{flex:1;overflow-y:auto;padding:0 16px 18px;scroll-behavior:smooth}
 .in{animation:in .3s ease both}
 @keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
@@ -34,7 +34,7 @@ main{flex:1;overflow-y:auto;padding:0 16px 18px;scroll-behavior:smooth}
 .fl span:nth-child(2){animation-delay:-1.3s}.fl span:nth-child(3){animation-delay:-2.6s}
 .in .tile,.in .card{animation:tin .45s cubic-bezier(.2,.8,.2,1) backwards}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
-.search{width:100%;padding:13px 16px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--text);font:inherit;margin-bottom:14px;transition:border-color .2s}
+.search{width:100%;padding:13px 16px;border-radius:14px;border:1px solid rgba(31,143,95,.18);background:rgba(255,255,255,.6);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 6px 18px -12px rgba(23,115,79,.5);color:var(--text);font:inherit;margin-bottom:14px;transition:border-color .2s}
 .search:focus{border-color:var(--acc);outline:none}
 .hero{position:relative;overflow:hidden;border-radius:24px;padding:22px 18px 20px;color:#fff;background:linear-gradient(135deg,#17734f 0%,#25a06e 50%,#52bf8e 100%);background-size:180% 180%;animation:drift 14s ease-in-out infinite alternate;margin-bottom:20px;box-shadow:0 14px 30px -12px rgba(23,115,79,.55)}
 .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 90% 0%,rgba(214,255,190,.5),transparent 55%);pointer-events:none}
@@ -52,7 +52,7 @@ main{flex:1;overflow-y:auto;padding:0 16px 18px;scroll-behavior:smooth}
 .cta{margin-top:18px;background:#fff;color:#14684a;border-radius:13px;padding:12px 20px;font-weight:700;font-size:14px}
 h2.sec{font-size:16px;margin:2px 0 12px;font-weight:700}
 .cats{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}
-.tile{aspect-ratio:1;background:linear-gradient(145deg,var(--c1),var(--c2));color:#fff;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-weight:700;font-size:23px;box-shadow:0 6px 12px -8px var(--c2)}
+.tile{aspect-ratio:1;background:linear-gradient(145deg,color-mix(in srgb,var(--c1) 26%,rgba(255,255,255,.6)),color-mix(in srgb,var(--c1) 8%,rgba(255,255,255,.4)));color:var(--c2);border:1px solid rgba(255,255,255,.75);-webkit-backdrop-filter:blur(14px) saturate(160%);backdrop-filter:blur(14px) saturate(160%);border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-weight:700;font-size:23px;box-shadow:0 8px 18px -10px var(--c2),inset 0 1px 0 rgba(255,255,255,.95)}
 .tile small{font-size:10px;font-weight:500;opacity:.95}
 .tile i{font-style:normal;font-size:19px}
 .note{background:color-mix(in srgb,#d97706 16%,var(--card));border:1px solid color-mix(in srgb,#d97706 40%,transparent);border-radius:14px;padding:12px 14px;font-size:13px;line-height:1.45;margin:-6px 0 18px}
@@ -72,7 +72,7 @@ h2.sec{font-size:16px;margin:2px 0 12px;font-weight:700}
 .row b{flex:1;font-size:16px}
 .row .buy{flex:none;background:var(--acc);color:var(--accT);padding:10px 14px;font-size:12px}
 .x{width:30px;height:30px;color:var(--mut);font-size:18px}
-nav{display:grid;grid-template-columns:repeat(4,1fr);background:var(--card);border-top:1px solid var(--line)}
+nav{display:grid;grid-template-columns:repeat(4,1fr);background:rgba(255,255,255,.7);-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);border-top:1px solid rgba(31,143,95,.15)}
 nav button{padding:8px 0 8px;font-size:11px;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:3px}
 nav button span{font-size:18px;line-height:1;padding:4px 16px;border-radius:14px;transition:background .2s,color .2s}
 nav button.on{color:var(--acc);font-weight:700}
@@ -84,6 +84,20 @@ nav button.on span{background:color-mix(in srgb,var(--acc) 18%,transparent)}
 .stats b{display:block;font-size:22px}
 .stats span{font-size:12px;color:var(--mut)}
 .pbtn{background:var(--acc);color:var(--accT);border-radius:12px;padding:11px 20px;font-weight:700;font-size:13px}
+.sheet{position:fixed;inset:0;z-index:20;display:flex;align-items:flex-end;justify-content:center;background:rgba(10,30,20,.35);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .25s}
+.sheet.show{opacity:1;pointer-events:auto}
+.panel{width:100%;max-width:480px;background:rgba(255,255,255,.85);-webkit-backdrop-filter:blur(22px) saturate(170%);backdrop-filter:blur(22px) saturate(170%);border:1px solid rgba(255,255,255,.9);border-radius:24px 24px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom,0px));transform:translateY(40px);transition:transform .3s cubic-bezier(.2,.8,.2,1);text-align:center;box-shadow:0 -12px 40px -16px rgba(23,115,79,.5)}
+.sheet.show .panel{transform:none}
+.eic{width:56px;height:56px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--acc) 15%,#fff);color:var(--acc)}
+.eic svg{width:28px;height:28px}
+.panel h3,.contact h3{font-size:18px;margin-bottom:8px}
+.panel p,.contact p{font-size:14px;line-height:1.5;color:var(--mut);margin-bottom:16px}
+.panel b,.contact b{color:var(--text)}
+.adm{display:block;background:var(--acc);color:var(--accT);border-radius:13px;padding:13px;font-weight:700;font-size:14px;text-align:center}
+.panel .adm{margin-bottom:8px}
+.cls{width:100%;padding:11px;color:var(--mut);font-size:13px}
+.contact{background:rgba(255,255,255,.65);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(31,143,95,.18);border-radius:18px;padding:16px;text-align:left;margin-top:6px;box-shadow:0 8px 20px -14px rgba(23,115,79,.5)}
+.contact h3{font-size:16px}
 .toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--text);color:var(--bg);padding:9px 15px;border-radius:20px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .25s;max-width:90%;text-align:center}
 .toast.show{opacity:1}
 </style>
@@ -95,6 +109,7 @@ nav button.on span{background:color-mix(in srgb,var(--acc) 18%,transparent)}
   <nav id="nav"></nav>
 </div>
 <div class="toast" id="toast"></div>
+<div class="sheet" id="sheet" aria-hidden="true"><div class="panel" role="dialog" aria-label="Fragment list help"><div class="eic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></div><h3>Not in the Fragment list?</h3><p>If the username is not in the Fragment list, please talk to Admin <b>@zoha742</b>.</p><a class="adm" href="https://t.me/zoha742" target="_blank" rel="noopener" data-tg="1">Message @zoha742</a><button class="cls" id="cls">Close</button></div></div>
 
 
 
@@ -108,6 +123,7 @@ const hash=s=>{let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))>>>0;return h};
 const $=s=>document.querySelector(s);
 const tg=window.Telegram&&window.Telegram.WebApp;
 if(tg){try{tg.ready();tg.expand()}catch(e){}}
+const EYE=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>`;
 const LET=[..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
 const SPD=["Bank","Shop","Bird","Job","AI","Bet Site","6 Letter","Others"];let DATA={},KEYS=[...LET,...SPD],ALL=[];KEYS.forEach(k=>{DATA[k]=[]});
 const S={tab:"home",cat:null,q:"",err:false,wish:new Set(),cart:new Set()};
@@ -131,8 +147,11 @@ function hero(){
   return `<section class="hero"><span class="badge">Premium NFT collection</span><h2>Rare Telegram usernames, picked to be remembered</h2><p>Short, sharp five-letter names that are yours to own. Find the one that fits you, save it, and buy it on Fragment.</p><div class="fl">${pick.map(x=>`<span>@${x}</span>`).join("")}</div><div class="hs"><div><b>${n}</b>usernames</div><div><b>${KEYS.length}</b>series</div></div><button class="cta" data-go="1">Browse A to Z</button></section>`;
 }
 
+function openSheet(){const s=$("#sheet");s.classList.add("show");s.setAttribute("aria-hidden","false")}
+function closeSheet(){const s=$("#sheet");s.classList.remove("show");s.setAttribute("aria-hidden","true")}
 function render(anim){
   const hd=$("#hd"),m=$("#main");
+  if(anim)closeSheet();
   let title="Username Shop",body="";
   if(S.tab==="home"){
     if(S.cat){title=S.cat.length===1?S.cat+" series":S.cat;body=`<div class="sub">${(DATA[S.cat]||[]).length} usernames</div>`+grid(DATA[S.cat]||[])}
@@ -143,8 +162,8 @@ function render(anim){
     }
   }else if(S.tab==="wish"){title="Wishlist";body=S.wish.size?grid([...S.wish]):`<div class="empty">Tap the heart on a username to save it here.</div>`}
   else if(S.tab==="cart"){title="Cart";body=S.cart.size?[...S.cart].map(n=>`<div class="row"><b>@${n}</b><a class="buy" href="${furl(n)}" target="_blank" rel="noopener" data-f="1">Buy Now</a><button class="x" data-r="${n}" aria-label="Remove">×</button></div>`).join(""):`<div class="empty">Tap the cart on a username to add it here.</div>`}
-  else{title="Profile";body=`<div class="prof"><div class="av">U</div><b>Guest</b><div class="stats"><div><b>${S.wish.size}</b><span>Wishlist</span></div><div><b>${S.cart.size}</b><span>In cart</span></div></div><button class="pbtn" id="th">Switch light or dark</button></div>`}
-  hd.innerHTML=(S.tab==="home"&&(S.cat||S.q)?`<button class="back" id="bk" aria-label="Back">‹</button>`:"")+`<h1>${title}</h1>`;
+  else{title="Profile";body=`<div class="prof"><div class="av">U</div><b>Guest</b><div class="stats"><div><b>${S.wish.size}</b><span>Wishlist</span></div><div><b>${S.cart.size}</b><span>In cart</span></div></div><div class="contact"><h3>Contact</h3><p>If a username is not in the Fragment list, please talk to Admin <b>@zoha742</b>.</p><a class="adm" href="https://t.me/zoha742" target="_blank" rel="noopener" data-tg="1">Message @zoha742</a></div></div>`}
+  hd.innerHTML=(S.tab==="home"&&(S.cat||S.q)?`<button class="back" id="bk" aria-label="Back">‹</button>`:"")+`<h1>${title}</h1>`+(S.tab==="home"&&S.cat?`<button class="eye" id="eye" aria-label="View info">${EYE}</button>`:"");
   if(S.tab==="home"&&!S.cat)body=`<input class="search" id="q" placeholder="Search a username" value="${S.q}">`+body;
   const keep=m.scrollTop;
   m.innerHTML=body;
@@ -156,6 +175,7 @@ function render(anim){
 document.addEventListener("click",e=>{
   const g=a=>e.target.closest("["+a+"]");let x;
   if(x=g("data-f")){if(tg&&tg.openLink){e.preventDefault();tg.openLink(x.href)}}
+  else if(x=g("data-tg")){if(tg&&tg.openTelegramLink){e.preventDefault();tg.openTelegramLink(x.href)}}
   else if(x=g("data-go")){$("#az").scrollIntoView({behavior:"smooth",block:"start"})}
   else if(x=g("data-t")){S.tab=x.dataset.t;S.cat=null;S.q="";render(true)}
   else if(x=g("data-c")){S.cat=x.dataset.c;render(true)}
@@ -163,8 +183,10 @@ document.addEventListener("click",e=>{
   else if(x=g("data-a")){S.cart.add(x.dataset.a);S.tab="cart";S.cat=null;S.q="";render(true);toast("@"+x.dataset.a+" added to cart")}
   else if(x=g("data-r")){S.cart.delete(x.dataset.r);render(false)}
   else if(e.target.closest("#bk")){S.cat=null;S.q="";render(true)}
-  else if(e.target.closest("#th")){const r=document.documentElement,d=r.dataset.theme==="dark"||(!r.dataset.theme&&matchMedia("(prefers-color-scheme:dark)").matches);r.dataset.theme=d?"light":"dark"}
+  else if(e.target.closest("#eye")){openSheet()}
+  else if(e.target.closest("#cls")||e.target.id==="sheet"){closeSheet()}
 });
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet()});
 document.addEventListener("input",e=>{if(e.target.id==="q"){S.q=e.target.value.trim();render(false)}});
 
 load().then(raw=>{
