@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Username Shop</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
 <style>
@@ -100,6 +101,19 @@ nav button.on span{background:color-mix(in srgb,var(--acc) 18%,transparent)}
 .cls{width:100%;padding:11px;color:var(--mut);font-size:13px}
 .contact{background:rgba(255,255,255,.65);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(31,143,95,.18);border-radius:18px;padding:16px;text-align:left;margin-top:6px;box-shadow:0 8px 20px -14px rgba(23,115,79,.5)}
 .contact h3{font-size:16px}
+.stage{position:relative;width:250px;height:250px;margin:0 auto 4px}
+.stage::before{content:"";position:absolute;left:50%;top:50%;width:210px;height:210px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(82,191,142,.38),transparent 70%)}
+.orbit{position:absolute;inset:0;pointer-events:none;animation:spin 48s linear infinite}
+.o{position:absolute;left:50%;top:50%;width:0;height:0;transform:rotate(var(--a)) translateY(calc(var(--r) * -1)) rotate(calc(var(--a) * -1))}
+.c{position:absolute;left:0;top:0;animation:cspin 48s linear infinite}
+.f{position:absolute;left:-18px;top:-18px;width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;background:linear-gradient(145deg,color-mix(in srgb,var(--c1) 32%,#fff),color-mix(in srgb,var(--c1) 12%,#fff));border:1px solid rgba(255,255,255,.85);box-shadow:0 8px 16px -8px var(--c1);animation:bob 3.6s ease-in-out infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes cspin{to{transform:rotate(-360deg)}}
+@keyframes bob{50%{translate:0 -6px}}
+.stage .av{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:96px;height:96px;margin:0;border:3px solid #fff;box-shadow:0 10px 24px -10px rgba(23,115,79,.7);overflow:hidden}
+.avimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%}
+.pn{display:block;font-size:20px;margin-top:2px}
+.pu{color:var(--mut);font-size:14px;margin-top:2px}
 .toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--text);color:var(--bg);padding:9px 15px;border-radius:20px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .25s;max-width:90%;text-align:center}
 .toast.show{opacity:1}
 </style>
@@ -152,6 +166,18 @@ function hero(){
   return `<section class="hero"><span class="badge">Premium NFT collection</span><h2>Rare Telegram usernames, picked to be remembered</h2><p>Short, sharp five-letter names that are yours to own. Find the one that fits you, save it, and buy it on Fragment.</p><div class="fl">${pick.map(x=>`<span>@${x}</span>`).join("")}</div><div class="hs"><div><b>${n}</b>usernames</div><div><b>${KEYS.length}</b>series</div></div><button class="cta" data-go="1">Browse A to Z</button></section>`;
 }
 
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function me(){
+  const u=tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user;
+  if(u)return{name:[u.first_name,u.last_name].filter(Boolean).join(" ")||"Telegram user",un:u.username?"@"+u.username:"",photo:u.photo_url||""};
+  return{name:"Your Name",un:"@yourname",photo:""};
+}
+function profHead(){
+  const p=me(),ini=esc((p.name.trim()[0]||"U").toUpperCase());
+  const items=["🧸","🐸","💎","🪙","🎁","🦆","🔮","🌙"],ang=[10,55,100,145,190,235,280,325],rad=[96,84,100,86,96,84,100,86];
+  const orb=items.map((e,i)=>`<span class="o" style="--a:${ang[i]}deg;--r:${rad[i]}px"><span class="c"><span class="f" style="--c1:${GR[i%GR.length][0]};animation-delay:-${(i*0.6).toFixed(1)}s">${e}</span></span></span>`).join("");
+  return `<div class="stage"><div class="orbit">${orb}</div><div class="av">${ini}${p.photo?`<img class="avimg" src="${esc(p.photo)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`:""}</div></div><b class="pn">${esc(p.name)}</b>${p.un?`<div class="pu">${esc(p.un)}</div>`:""}`;
+}
 function openSheet(n){const s=$("#sheet");$("#shp").innerHTML="If <b>@"+n+"</b> is not in the Fragment list, please contact Admin <b>@Zoha742</b>.";s.classList.add("show");s.setAttribute("aria-hidden","false")}
 function closeSheet(){const s=$("#sheet");s.classList.remove("show");s.setAttribute("aria-hidden","true")}
 function render(anim){
@@ -167,7 +193,7 @@ function render(anim){
     }
   }else if(S.tab==="wish"){title="Wishlist";body=S.wish.size?grid([...S.wish]):`<div class="empty">Tap the heart on a username to save it here.</div>`}
   else if(S.tab==="cart"){title="Cart";body=S.cart.size?[...S.cart].map(n=>`<div class="row"><b>@${n}</b><a class="buy" href="${furl(n)}" target="_blank" rel="noopener" data-f="1">Buy Now</a><button class="x" data-r="${n}" aria-label="Remove">×</button></div>`).join(""):`<div class="empty">Tap the cart on a username to add it here.</div>`}
-  else{title="Profile";body=`<div class="prof"><div class="av">U</div><b>Guest</b><div class="stats"><div><b>${S.wish.size}</b><span>Wishlist</span></div><div><b>${S.cart.size}</b><span>In cart</span></div></div><div class="contact"><h3>Contact</h3><p>If a username is not in the Fragment list, please talk to Admin <b>@zoha742</b>.</p><a class="adm" href="https://t.me/zoha742" target="_blank" rel="noopener" data-tg="1">Message @zoha742</a></div></div>`}
+  else{title="Profile";body=`<div class="prof">${profHead()}<div class="stats"><div><b>${S.wish.size}</b><span>Wishlist</span></div><div><b>${S.cart.size}</b><span>In cart</span></div></div><div class="contact"><h3>Contact</h3><p>If a username is not in the Fragment list, please talk to Admin <b>@zoha742</b>.</p><a class="adm" href="https://t.me/zoha742" target="_blank" rel="noopener" data-tg="1">Message @zoha742</a></div></div>`}
   hd.innerHTML=(S.tab==="home"&&(S.cat||S.q)?`<button class="back" id="bk" aria-label="Back">‹</button>`:"")+`<h1>${title}</h1>`;
   if(S.tab==="home"&&!S.cat)body=`<input class="search" id="q" placeholder="Search a username" value="${S.q}">`+body;
   const keep=m.scrollTop;
