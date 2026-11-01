@@ -60,6 +60,8 @@ h2.sec{font-size:16px;margin:2px 0 12px;font-weight:700}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .card{position:relative;background:linear-gradient(145deg,var(--c1),var(--c2));color:#fff;border-radius:16px;padding:34px 8px 8px;text-align:center;display:flex;flex-direction:column;gap:12px;min-width:0;box-shadow:0 8px 16px -10px var(--c2)}
 .un{font-weight:700;font-size:17px;overflow:hidden;text-overflow:ellipsis}
+.ceye{position:absolute;top:4px;left:4px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;color:#fff;opacity:.9}
+.ceye svg{width:18px;height:18px}
 .heart{position:absolute;top:4px;right:4px;width:34px;height:34px;font-size:20px;color:#fff;opacity:.85}
 .heart.on{opacity:1;text-shadow:0 0 8px rgba(255,255,255,.9)}
 .pop{animation:pop .35s ease}
@@ -109,7 +111,7 @@ nav button.on span{background:color-mix(in srgb,var(--acc) 18%,transparent)}
   <nav id="nav"></nav>
 </div>
 <div class="toast" id="toast"></div>
-<div class="sheet" id="sheet" aria-hidden="true"><div class="panel" role="dialog" aria-label="Fragment list help"><div class="eic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></div><h3>Not in the Fragment list?</h3><p>If the username is not in the Fragment list, please talk to Admin <b>@zoha742</b>.</p><a class="adm" href="https://t.me/zoha742" target="_blank" rel="noopener" data-tg="1">Message @zoha742</a><button class="cls" id="cls">Close</button></div></div>
+<div class="sheet" id="sheet" aria-hidden="true"><div class="panel" role="dialog" aria-label="Fragment list help"><div class="eic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></div><h3>Not in the Fragment list?</h3><p id="shp"></p><a class="adm" href="https://t.me/Zoha742" target="_blank" rel="noopener" data-tg="1">Message @Zoha742</a><button class="cls" id="cls">Close</button></div></div>
 
 
 
@@ -117,6 +119,9 @@ nav button.on span{background:color-mix(in srgb,var(--acc) 18%,transparent)}
 // Real app: set this to your raw GitHub link, e.g.
 // https://raw.githubusercontent.com/YOURNAME/YOURREPO/main/usernames.json
 const DATA_URL="usernames.json";
+// Names shown as tags on the green landing card (up to 4).
+// Put your own names here. Leave it as [] to pick names from usernames.json automatically.
+const HERO_NAMES=["relbo","cryptopay24","gignow","monalisaeye"];
 const ICONS={Bank:"🏦",Shop:"🛍️",Bird:"🐦",Job:"💼",AI:"🤖","Bet Site":"🎲","6 Letter":"6️⃣",Others:"✨"};
 const GR=[["#2e9d6a","#14684a"],["#0d9488","#115e59"],["#0284c7","#075985"],["#65a30d","#3f6212"],["#d97706","#92400e"],["#e0526b","#9f1239"],["#7c5cd6","#4c2fa0"],["#0e8f8f","#0b5e6b"]];
 const hash=s=>{let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))>>>0;return h};
@@ -138,16 +143,16 @@ let tt;function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("sh
 const furl=n=>"https://fragment.com/username/"+n;
 function card(n,i=0){
   const [c1,c2]=GR[hash(n)%GR.length],w=S.wish.has(n);
-  return `<div class="card" style="--c1:${c1};--c2:${c2};animation-delay:${Math.min(i,18)*30}ms"><button class="heart ${w?'on':''}" data-w="${n}" aria-label="Wishlist">${w?'♥':'♡'}</button><div class="un">${n}</div><div class="acts"><a class="buy" href="${furl(n)}" target="_blank" rel="noopener" data-f="1">Buy Now</a><button class="cart" data-a="${n}" aria-label="Add to cart">🛒</button></div></div>`;
+  return `<div class="card" style="--c1:${c1};--c2:${c2};animation-delay:${Math.min(i,18)*30}ms"><button class="ceye" data-i="${n}" aria-label="Fragment list info">${EYE}</button><button class="heart ${w?'on':''}" data-w="${n}" aria-label="Wishlist">${w?'♥':'♡'}</button><div class="un">${n}</div><div class="acts"><a class="buy" href="${furl(n)}" target="_blank" rel="noopener" data-f="1">Buy Now</a><button class="cart" data-a="${n}" aria-label="Add to cart">🛒</button></div></div>`;
 }
 const grid=a=>a.length?`<div class="grid">${a.map(card).join("")}</div>`:`<div class="empty">Nothing here yet.</div>`;
 
 function hero(){
-  const n=ALL.length,pick=[ALL[0],ALL[Math.floor(n/3)],ALL[Math.floor(2*n/3)]].filter(Boolean);
+  const n=ALL.length,own=HERO_NAMES.map(x=>String(x).toLowerCase().replace(/[^a-z0-9_]/g,"")).filter(Boolean),pick=(own.length?own:[ALL[0],ALL[Math.floor(n/3)],ALL[Math.floor(2*n/3)]]).filter(Boolean).slice(0,4);
   return `<section class="hero"><span class="badge">Premium NFT collection</span><h2>Rare Telegram usernames, picked to be remembered</h2><p>Short, sharp five-letter names that are yours to own. Find the one that fits you, save it, and buy it on Fragment.</p><div class="fl">${pick.map(x=>`<span>@${x}</span>`).join("")}</div><div class="hs"><div><b>${n}</b>usernames</div><div><b>${KEYS.length}</b>series</div></div><button class="cta" data-go="1">Browse A to Z</button></section>`;
 }
 
-function openSheet(){const s=$("#sheet");s.classList.add("show");s.setAttribute("aria-hidden","false")}
+function openSheet(n){const s=$("#sheet");$("#shp").innerHTML="If <b>@"+n+"</b> is not in the Fragment list, please contact Admin <b>@Zoha742</b>.";s.classList.add("show");s.setAttribute("aria-hidden","false")}
 function closeSheet(){const s=$("#sheet");s.classList.remove("show");s.setAttribute("aria-hidden","true")}
 function render(anim){
   const hd=$("#hd"),m=$("#main");
@@ -163,7 +168,7 @@ function render(anim){
   }else if(S.tab==="wish"){title="Wishlist";body=S.wish.size?grid([...S.wish]):`<div class="empty">Tap the heart on a username to save it here.</div>`}
   else if(S.tab==="cart"){title="Cart";body=S.cart.size?[...S.cart].map(n=>`<div class="row"><b>@${n}</b><a class="buy" href="${furl(n)}" target="_blank" rel="noopener" data-f="1">Buy Now</a><button class="x" data-r="${n}" aria-label="Remove">×</button></div>`).join(""):`<div class="empty">Tap the cart on a username to add it here.</div>`}
   else{title="Profile";body=`<div class="prof"><div class="av">U</div><b>Guest</b><div class="stats"><div><b>${S.wish.size}</b><span>Wishlist</span></div><div><b>${S.cart.size}</b><span>In cart</span></div></div><div class="contact"><h3>Contact</h3><p>If a username is not in the Fragment list, please talk to Admin <b>@zoha742</b>.</p><a class="adm" href="https://t.me/zoha742" target="_blank" rel="noopener" data-tg="1">Message @zoha742</a></div></div>`}
-  hd.innerHTML=(S.tab==="home"&&(S.cat||S.q)?`<button class="back" id="bk" aria-label="Back">‹</button>`:"")+`<h1>${title}</h1>`+(S.tab==="home"&&S.cat?`<button class="eye" id="eye" aria-label="View info">${EYE}</button>`:"");
+  hd.innerHTML=(S.tab==="home"&&(S.cat||S.q)?`<button class="back" id="bk" aria-label="Back">‹</button>`:"")+`<h1>${title}</h1>`;
   if(S.tab==="home"&&!S.cat)body=`<input class="search" id="q" placeholder="Search a username" value="${S.q}">`+body;
   const keep=m.scrollTop;
   m.innerHTML=body;
@@ -183,7 +188,7 @@ document.addEventListener("click",e=>{
   else if(x=g("data-a")){S.cart.add(x.dataset.a);S.tab="cart";S.cat=null;S.q="";render(true);toast("@"+x.dataset.a+" added to cart")}
   else if(x=g("data-r")){S.cart.delete(x.dataset.r);render(false)}
   else if(e.target.closest("#bk")){S.cat=null;S.q="";render(true)}
-  else if(e.target.closest("#eye")){openSheet()}
+  else if(x=g("data-i")){openSheet(x.dataset.i)}
   else if(e.target.closest("#cls")||e.target.id==="sheet"){closeSheet()}
 });
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet()});
