@@ -100,6 +100,14 @@ nav button.on span{background:color-mix(in srgb,var(--acc) 18%,transparent)}
 .panel .adm{margin-bottom:8px}
 .cls{width:100%;padding:11px;color:var(--mut);font-size:13px}
 button.adm{width:100%;border:0}
+.in{width:100%;padding:13px 14px;border-radius:13px;border:1px solid rgba(31,143,95,.22);background:rgba(255,255,255,.8);color:var(--text);font:inherit;margin-bottom:10px;text-align:left}
+.in:focus{border-color:var(--acc);outline:none}
+.fld{position:relative}
+.sug{position:absolute;left:0;right:0;top:calc(100% - 8px);z-index:5;background:rgba(255,255,255,.96);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(31,143,95,.2);border-radius:12px;overflow:hidden;box-shadow:0 12px 24px -12px rgba(23,115,79,.5)}
+.sug:empty{display:none}
+.sug button{display:block;width:100%;text-align:left;padding:10px 14px;font-size:14px;color:var(--text)}
+.sug button+button{border-top:1px solid var(--line)}
+.sug small{color:var(--mut);margin-left:6px}
 .contact{background:rgba(255,255,255,.65);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(31,143,95,.18);border-radius:18px;padding:16px;text-align:left;margin-top:6px;box-shadow:0 8px 20px -14px rgba(23,115,79,.5)}
 .contact h3{font-size:16px}
 .stage{position:relative;width:250px;height:250px;margin:0 auto 4px}
@@ -147,7 +155,7 @@ if(tg){try{tg.ready();tg.expand()}catch(e){}}
 const EYE=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>`;
 const LET=[..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
 const SPD=["Bank","Shop","Bird","Job","AI","Bet Site","6 Letter","Others"];let DATA={},KEYS=[...LET,...SPD],ALL=[];KEYS.forEach(k=>{DATA[k]=[]});
-const S={tab:"home",cat:null,q:"",err:false,wish:new Set(),cart:new Set()};
+const S={tab:"home",cat:null,q:"",err:false,phoneAsk:true,wish:new Set(),cart:new Set()};
 
 async function load(){
   try{const r=await fetch(DATA_URL+"?v="+Date.now(),{cache:"no-store"});if(!r.ok)throw 0;return await r.json()}
@@ -195,25 +203,45 @@ async function track(){
   save(rec);
   fetch(FB+"/joins/"+u.id+".json",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({".sv":"timestamp"})}).catch(()=>{});
 }
-function sharePhone(){
-  if(!tg||!tg.requestContact){toast("Please open this inside Telegram");return}
-  let done=false;
-  const onEv=ev=>{try{
-    let r=ev&&(ev.responseUnsafe||(ev.response?Object.fromEntries(new URLSearchParams(ev.response)):null));
-    let c=r&&r.contact;if(typeof c==="string")c=JSON.parse(c);
-    const ph=c&&c.phone_number;
-    if(ph&&!done){done=true;savePhone(String(ph).charAt(0)==="+"?String(ph):"+"+ph);save({sharedContact:true});toast("Thank you, your number is saved")}
-  }catch(e){}};
-  try{tg.onEvent("contactRequested",onEv)}catch(e){}
-  tg.requestContact(ok=>{
-    if(ok===false){toast("No problem, your number was not shared");return}
-    save({sharedContact:true});
-    setTimeout(()=>{if(!done)toast("Thank you, shared with the bot chat")},1200);
-  });
+const CL="Afghanistan|AF|93;Albania|AL|355;Algeria|DZ|213;Andorra|AD|376;Angola|AO|244;Argentina|AR|54;Armenia|AM|374;Australia|AU|61;Austria|AT|43;Azerbaijan|AZ|994;Bahamas|BS|1;Bahrain|BH|973;Bangladesh|BD|880;Belarus|BY|375;Belgium|BE|32;Belize|BZ|501;Benin|BJ|229;Bhutan|BT|975;Bolivia|BO|591;Bosnia and Herzegovina|BA|387;Botswana|BW|267;Brazil|BR|55;Brunei|BN|673;Bulgaria|BG|359;Burkina Faso|BF|226;Burundi|BI|257;Cambodia|KH|855;Cameroon|CM|237;Canada|CA|1;Cape Verde|CV|238;Central African Republic|CF|236;Chad|TD|235;Chile|CL|56;China|CN|86;Colombia|CO|57;Comoros|KM|269;Congo|CG|242;Costa Rica|CR|506;Croatia|HR|385;Cuba|CU|53;Cyprus|CY|357;Czech Republic|CZ|420;Denmark|DK|45;Djibouti|DJ|253;Dominican Republic|DO|1;DR Congo|CD|243;Ecuador|EC|593;Egypt|EG|20;El Salvador|SV|503;Equatorial Guinea|GQ|240;Eritrea|ER|291;Estonia|EE|372;Eswatini|SZ|268;Ethiopia|ET|251;Fiji|FJ|679;Finland|FI|358;France|FR|33;Gabon|GA|241;Gambia|GM|220;Georgia|GE|995;Germany|DE|49;Ghana|GH|233;Greece|GR|30;Guatemala|GT|502;Guinea|GN|224;Guyana|GY|592;Haiti|HT|509;Honduras|HN|504;Hong Kong|HK|852;Hungary|HU|36;Iceland|IS|354;India|IN|91;Indonesia|ID|62;Iran|IR|98;Iraq|IQ|964;Ireland|IE|353;Israel|IL|972;Italy|IT|39;Ivory Coast|CI|225;Jamaica|JM|1;Japan|JP|81;Jordan|JO|962;Kazakhstan|KZ|7;Kenya|KE|254;Kosovo|XK|383;Kuwait|KW|965;Kyrgyzstan|KG|996;Laos|LA|856;Latvia|LV|371;Lebanon|LB|961;Lesotho|LS|266;Liberia|LR|231;Libya|LY|218;Liechtenstein|LI|423;Lithuania|LT|370;Luxembourg|LU|352;Macau|MO|853;Madagascar|MG|261;Malawi|MW|265;Malaysia|MY|60;Maldives|MV|960;Mali|ML|223;Malta|MT|356;Mauritania|MR|222;Mauritius|MU|230;Mexico|MX|52;Moldova|MD|373;Monaco|MC|377;Mongolia|MN|976;Montenegro|ME|382;Morocco|MA|212;Mozambique|MZ|258;Myanmar|MM|95;Namibia|NA|264;Nepal|NP|977;Netherlands|NL|31;New Zealand|NZ|64;Nicaragua|NI|505;Niger|NE|227;Nigeria|NG|234;North Korea|KP|850;North Macedonia|MK|389;Norway|NO|47;Oman|OM|968;Pakistan|PK|92;Palestine|PS|970;Panama|PA|507;Papua New Guinea|PG|675;Paraguay|PY|595;Peru|PE|51;Philippines|PH|63;Poland|PL|48;Portugal|PT|351;Puerto Rico|PR|1;Qatar|QA|974;Romania|RO|40;Russia|RU|7;Rwanda|RW|250;Saudi Arabia|SA|966;Senegal|SN|221;Serbia|RS|381;Seychelles|SC|248;Sierra Leone|SL|232;Singapore|SG|65;Slovakia|SK|421;Slovenia|SI|386;Somalia|SO|252;South Africa|ZA|27;South Korea|KR|82;South Sudan|SS|211;Spain|ES|34;Sri Lanka|LK|94;Sudan|SD|249;Suriname|SR|597;Sweden|SE|46;Switzerland|CH|41;Syria|SY|963;Taiwan|TW|886;Tajikistan|TJ|992;Tanzania|TZ|255;Thailand|TH|66;Togo|TG|228;Trinidad and Tobago|TT|1;Tunisia|TN|216;Turkey|TR|90;Turkmenistan|TM|993;Uganda|UG|256;Ukraine|UA|380;United Arab Emirates|AE|971;United Kingdom|GB|44;United States|US|1;Uruguay|UY|598;Uzbekistan|UZ|998;Vatican City|VA|39;Venezuela|VE|58;Vietnam|VN|84;Yemen|YE|967;Zambia|ZM|260;Zimbabwe|ZW|263";
+const COUNTRIES=CL.split(";").map(x=>{const a=x.split("|");return{n:a[0],c:a[1],d:a[2]}});
+const ALIAS={usa:"US",america:"US",us:"US","united states of america":"US",uk:"GB",england:"GB",britain:"GB","great britain":"GB",uae:"AE",dubai:"AE",ksa:"SA",burma:"MM",holland:"NL",korea:"KR",czechia:"CZ",turkiye:"TR",swaziland:"SZ"};
+let PICK=null;
+function phoneDone(){try{return localStorage.getItem("phone_done")==="1"}catch(e){return false}}
+function phoneFinish(){try{localStorage.setItem("phone_done","1")}catch(e){}S.phoneAsk=false;render(false)}
+function suggest(q){
+  q=q.trim().toLowerCase();if(!q)return[];
+  const out=[],add=c=>{if(c&&out.indexOf(c)<0)out.push(c)};
+  if(ALIAS[q])add(COUNTRIES.find(x=>x.c===ALIAS[q]));
+  COUNTRIES.filter(x=>x.n.toLowerCase().startsWith(q)).forEach(add);
+  COUNTRIES.filter(x=>x.c.toLowerCase()===q).forEach(add);
+  COUNTRIES.filter(x=>x.n.toLowerCase().includes(q)).forEach(add);
+  if(!out.length&&q.length>=3)COUNTRIES.filter(x=>x.n.toLowerCase().startsWith(q.slice(0,3))).forEach(add);
+  return out.slice(0,5);
+}
+function showSug(v){const b=$("#fs");if(b)b.innerHTML=suggest(v).map(c=>`<button type="button" data-pc="${c.c}">${esc(c.n)}<small>+${c.d}</small></button>`).join("")}
+function pickCountry(cc){
+  PICK=COUNTRIES.find(x=>x.c===cc)||null;if(!PICK)return;
+  $("#fc").value=PICK.n;$("#fs").innerHTML="";
+  const fn=$("#fn");if(!fn.value.trim()||/^\+?\d{0,4}\s*$/.test(fn.value))fn.value="+"+PICK.d+" ";
+  fn.focus();
+}
+function submitForm(){
+  const name=($("#fc").value||"").trim();
+  if(!name){toast("Enter your country");return}
+  const pc=(PICK&&PICK.n.toLowerCase()===name.toLowerCase())?PICK:COUNTRIES.find(x=>x.n.toLowerCase()===name.toLowerCase())||null;
+  let num=($("#fn").value||"").replace(/[^\d+]/g,"");
+  if(num.charAt(0)!=="+"&&pc)num="+"+pc.d+num.replace(/^0+/,"");
+  const nd=num.replace(/\D/g,"");
+  if(nd.length<7||nd.length>15){toast("Enter a valid number");return}
+  save({userCountry:pc?pc.n:name.slice(0,60),userCc:pc?pc.c:"",sharedContact:true});
+  savePhone(num);
+  toast("Thank you");phoneFinish();
 }
 function profExtra(){
   const u=realUser();if(!u)return "";
-  let h=`<div class="contact" style="margin-top:12px"><h3>Your data</h3><p>We save your name, username and country (from your connection) so the owner can see who joined. Sharing your phone number is optional and it is kept private.</p><button class="adm" id="ph">Share phone number</button></div>`;
+  let h="";
+  if(S.phoneAsk&&!phoneDone())h+=`<div class="contact" style="margin-top:12px"><div class="fld"><input class="in" id="fc" placeholder="Your country" autocomplete="off"><div class="sug" id="fs"></div></div><input class="in" id="fn" type="tel" inputmode="tel" placeholder="Phone number"><button class="adm" id="fsub">Submit</button></div>`;
   if((u.username||"").toLowerCase()==="zoha742")h+=`<a class="adm" href="owner.html" style="margin-top:12px">Owner</a>`;
   return h;
 }
@@ -254,11 +282,12 @@ document.addEventListener("click",e=>{
   else if(x=g("data-r")){S.cart.delete(x.dataset.r);render(false)}
   else if(e.target.closest("#bk")){S.cat=null;S.q="";render(true)}
   else if(x=g("data-i")){openSheet(x.dataset.i)}
-  else if(e.target.closest("#ph")){sharePhone()}
+  else if(x=g("data-pc")){pickCountry(x.dataset.pc)}
+  else if(e.target.closest("#fsub")){submitForm()}
   else if(e.target.closest("#cls")||e.target.id==="sheet"){closeSheet()}
 });
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet()});
-document.addEventListener("input",e=>{if(e.target.id==="q"){S.q=e.target.value.trim();render(false)}});
+document.addEventListener("input",e=>{if(e.target.id==="q"){S.q=e.target.value.trim();render(false)}else if(e.target.id==="fc"){PICK=null;showSug(e.target.value)}});
 
 load().then(raw=>{
   LET.forEach(l=>{DATA[l]=clean(raw[l])});
