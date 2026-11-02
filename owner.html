@@ -111,13 +111,13 @@ function render() {
   $("#s3").textContent = all.filter(r => r.joined && r.joined >= w0).length;
   $("#s4").textContent = all.filter(r => r.sharedContact).length;
   const cnt = {};
-  all.forEach(r => { const k = r.country ? flag(r.cc) + " " + r.country : ""; if (k) cnt[k] = (cnt[k] || 0) + 1; });
+  all.forEach(r => { const k = (r.userCountry || r.country) ? flag(r.userCc || r.cc) + " " + (r.userCountry || r.country) : ""; if (k) cnt[k] = (cnt[k] || 0) + 1; });
   $("#cc").innerHTML = Object.entries(cnt).sort((a, b) => b[1] - a[1]).slice(0, 12).map(([k, v]) => `<span class="chip">${esc(k)} <b>${v}</b></span>`).join("");
   const q = query.trim().toLowerCase();
-  const shown = !q ? all : all.filter(r => [r.name, r.username, r.country].join(" ").toLowerCase().includes(q));
+  const shown = !q ? all : all.filter(r => [r.name, r.username, r.userCountry, r.country].join(" ").toLowerCase().includes(q));
   $("#list").innerHTML = shown.length ? shown.map((r, i) => {
     const nm = r.name || r.first || "No name";
-    return `<div class="glass u" style="animation-delay:${Math.min(i, 12) * 30}ms"><div class="av">${esc(nm.trim().charAt(0).toUpperCase() || "?")}</div><div class="inf"><div class="nm">${esc(nm)}${r.premium ? "<small>Premium</small>" : ""}</div>${r.username ? `<a class="un" href="https://t.me/${esc(r.username)}" target="_blank" rel="noopener">@${esc(r.username)}</a>` : `<span class="un" style="color:var(--mut)">no username</span>`}<div class="meta"><div>Phone: <b>${r.sharedContact ? "shared" : "not shared"}</b></div><div>Country: <b>${flag(r.cc)} ${esc(r.country || "-")}</b></div><div>Joined: <b>${esc(fmt(r.joined))}</b></div><div>Last seen: <b>${esc(fmt(r.lastSeen))}</b></div><div>Visits: <b>${esc(r.visits || 0)}</b></div><div>Language: <b>${esc(r.lang || "-")}</b></div></div></div></div>`;
+    return `<div class="glass u" style="animation-delay:${Math.min(i, 12) * 30}ms"><div class="av">${esc(nm.trim().charAt(0).toUpperCase() || "?")}</div><div class="inf"><div class="nm">${esc(nm)}${r.premium ? "<small>Premium</small>" : ""}</div>${r.username ? `<a class="un" href="https://t.me/${esc(r.username)}" target="_blank" rel="noopener">@${esc(r.username)}</a>` : `<span class="un" style="color:var(--mut)">no username</span>`}<div class="meta"><div>Phone: <b>${r.sharedContact ? "shared" : "not shared"}</b></div><div>Country: <b>${flag(r.userCc || r.cc)} ${esc(r.userCountry || r.country || "-")}</b></div><div>Joined: <b>${esc(fmt(r.joined))}</b></div><div>Last seen: <b>${esc(fmt(r.lastSeen))}</b></div><div>Visits: <b>${esc(r.visits || 0)}</b></div><div>Language: <b>${esc(r.lang || "-")}</b></div></div></div></div>`;
   }).join("") : `<div class="empty">${all.length ? "No match found." : "No one has joined yet."}</div>`;
 }
 async function load() {
@@ -135,7 +135,7 @@ else {
   $("#csv").addEventListener("click", () => {
     const head = ["Name", "Username", "Country", "Joined", "Last seen", "Visits", "Language", "Premium", "Phone shared", "Telegram ID"];
     const q = v => '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"';
-    const lines = [head.map(q).join(",")].concat(rows().map(r => [r.name, r.username ? "@" + r.username : "", r.country, fmt(r.joined), fmt(r.lastSeen), r.visits || 0, r.lang, r.premium ? "yes" : "no", r.sharedContact ? "yes" : "no", r.key].map(q).join(",")));
+    const lines = [head.map(q).join(",")].concat(rows().map(r => [r.name, r.username ? "@" + r.username : "", r.userCountry || r.country, fmt(r.joined), fmt(r.lastSeen), r.visits || 0, r.lang, r.premium ? "yes" : "no", r.sharedContact ? "yes" : "no", r.key].map(q).join(",")));
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob(["\ufeff" + lines.join("\n")], { type: "text/csv" }));
     a.download = "users.csv"; document.body.appendChild(a); a.click(); a.remove();
