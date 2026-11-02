@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Owner</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff;--text:#12281d;--mut:#5f7a6b;--acc:#1f8f5f;--line:#d6e8dc;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+*{box-sizing:border-box;margin:0}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--text);font-family:"Space Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(420px 300px at 92% 6%,rgba(82,191,142,.2),transparent 70%),radial-gradient(380px 320px at 4% 52%,rgba(125,211,252,.2),transparent 70%),radial-gradient(360px 300px at 84% 96%,rgba(253,224,71,.16),transparent 70%)}
+#app{position:relative;z-index:1;max-width:560px;margin:0 auto;padding:0 16px 30px}
+header{display:flex;align-items:center;gap:10px;padding:14px 0 12px}
+header h1{flex:1;font-size:22px}
+button,input{font:inherit;color:inherit}
+button{border:0;background:none;cursor:pointer;transition:transform .15s ease}
+button:active,.btn:active{transform:scale(.96)}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.back{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px;text-decoration:none;color:var(--text);background:rgba(255,255,255,.65);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(31,143,95,.2)}
+.out{font-size:13px;color:var(--mut);padding:8px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.65)}
+.glass{background:rgba(255,255,255,.65);-webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);border:1px solid rgba(31,143,95,.18);border-radius:20px;box-shadow:0 10px 26px -16px rgba(23,115,79,.5)}
+#lock{padding:26px 18px;margin-top:20px;text-align:center}
+#lock h2{font-size:20px;margin-bottom:8px}
+#lock p{font-size:14px;color:var(--mut);line-height:1.5}
+.note{font-size:12px;color:var(--mut);margin:2px 2px 14px;line-height:1.5}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.chip{font-size:12px;padding:6px 10px;border-radius:20px;background:rgba(255,255,255,.7);border:1px solid rgba(31,143,95,.18)}
+.stats{grid-template-columns:repeat(2,1fr)!important}
+input{width:100%;padding:13px 14px;border-radius:13px;border:1px solid rgba(31,143,95,.22);background:rgba(255,255,255,.8);margin-bottom:10px}
+input:focus{border-color:var(--acc);outline:none}
+.btn{display:block;width:100%;background:var(--acc);color:#fff;border-radius:13px;padding:13px;font-weight:700;font-size:14px;text-align:center}
+.err{color:#b42318;font-size:13px;margin-top:10px;min-height:18px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:6px 0 14px}
+.stat{padding:12px 6px;text-align:center}
+.stat b{display:block;font-size:21px}
+.stat span{font-size:11px;color:var(--mut)}
+.tools{display:flex;gap:8px;margin-bottom:12px}
+.tools input{margin:0;flex:1}
+.tools .btn{width:auto;padding:0 14px;white-space:nowrap}
+.u{display:flex;gap:12px;padding:12px;margin-bottom:10px;animation:in .35s ease backwards}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.av{flex:none;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:18px;background:linear-gradient(135deg,#17734f,#52bf8e)}
+.inf{min-width:0;flex:1}
+.nm{font-weight:700;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nm small{font-weight:500;font-size:11px;color:#b45309;margin-left:6px}
+.un{font-size:13px;color:var(--acc);text-decoration:none}
+.meta{display:grid;grid-template-columns:1fr 1fr;gap:3px 10px;margin-top:6px;font-size:12px;color:var(--mut)}
+.meta b{color:var(--text);font-weight:600}
+.empty{text-align:center;color:var(--mut);padding:40px 10px;font-size:14px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <a class="back" href="index.html" aria-label="Back to the app">‹</a>
+    <h1>Owner</h1>
+    <button class="out" id="rf">Refresh</button>
+  </header>
+
+  <section id="lock" class="glass" hidden>
+    <h2>Only for the owner</h2>
+    <p>Open this page from the Owner option in your Profile inside Telegram.</p>
+  </section>
+
+  <section id="dash" hidden>
+    <div class="stats">
+      <div class="glass stat"><b id="s1">0</b><span>Total users</span></div>
+      <div class="glass stat"><b id="s2">0</b><span>New today</span></div>
+      <div class="glass stat"><b id="s3">0</b><span>New this week</span></div>
+      <div class="glass stat"><b id="s4">0</b><span>Shared phone</span></div>
+    </div>
+    <div class="chips" id="cc"></div>
+    <div class="tools">
+      <input id="q" type="search" placeholder="Search name, username, country">
+      <button class="btn" id="csv">Download CSV</button>
+    </div>
+    <div class="note">Phone numbers are kept private. You can see them in the Firebase console under Realtime Database, in the phones section.</div>
+    <div id="list"></div>
+  </section>
+</div>
+
+<script>
+const FB = "https://nft-app-c366e-default-rtdb.firebaseio.com";
+const tg = window.Telegram && window.Telegram.WebApp;
+if (tg) { try { tg.ready(); tg.expand(); } catch (e) {} }
+const me = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
+const isOwner = !!(me && (me.username || "").toLowerCase() === "zoha742");
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+let USERS = {}, JOINS = {}, query = "", timer;
+
+const flag = cc => cc && cc.length === 2 ? String.fromCodePoint(...[...cc.toUpperCase()].map(c => 127397 + c.charCodeAt(0))) : "🌍";
+const fmt = ts => ts ? new Date(ts).toLocaleString([], { dateStyle: "medium", timeStyle: "short" }) : "-";
+
+function rows() {
+  return Object.entries(USERS).map(([k, u]) => Object.assign({ key: k }, u, { joined: JOINS[k] || null }))
+    .sort((a, b) => (b.lastSeen || 0) - (a.lastSeen || 0));
+}
+function render() {
+  const all = rows();
+  const day = new Date(); day.setHours(0, 0, 0, 0);
+  const d0 = day.getTime(), w0 = d0 - 6 * 86400000;
+  $("#s1").textContent = all.length;
+  $("#s2").textContent = all.filter(r => r.joined && r.joined >= d0).length;
+  $("#s3").textContent = all.filter(r => r.joined && r.joined >= w0).length;
+  $("#s4").textContent = all.filter(r => r.sharedContact).length;
+  const cnt = {};
+  all.forEach(r => { const k = r.country ? flag(r.cc) + " " + r.country : ""; if (k) cnt[k] = (cnt[k] || 0) + 1; });
+  $("#cc").innerHTML = Object.entries(cnt).sort((a, b) => b[1] - a[1]).slice(0, 12).map(([k, v]) => `<span class="chip">${esc(k)} <b>${v}</b></span>`).join("");
+  const q = query.trim().toLowerCase();
+  const shown = !q ? all : all.filter(r => [r.name, r.username, r.country].join(" ").toLowerCase().includes(q));
+  $("#list").innerHTML = shown.length ? shown.map((r, i) => {
+    const nm = r.name || r.first || "No name";
+    return `<div class="glass u" style="animation-delay:${Math.min(i, 12) * 30}ms"><div class="av">${esc(nm.trim().charAt(0).toUpperCase() || "?")}</div><div class="inf"><div class="nm">${esc(nm)}${r.premium ? "<small>Premium</small>" : ""}</div>${r.username ? `<a class="un" href="https://t.me/${esc(r.username)}" target="_blank" rel="noopener">@${esc(r.username)}</a>` : `<span class="un" style="color:var(--mut)">no username</span>`}<div class="meta"><div>Phone: <b>${r.sharedContact ? "shared" : "not shared"}</b></div><div>Country: <b>${flag(r.cc)} ${esc(r.country || "-")}</b></div><div>Joined: <b>${esc(fmt(r.joined))}</b></div><div>Last seen: <b>${esc(fmt(r.lastSeen))}</b></div><div>Visits: <b>${esc(r.visits || 0)}</b></div><div>Language: <b>${esc(r.lang || "-")}</b></div></div></div></div>`;
+  }).join("") : `<div class="empty">${all.length ? "No match found." : "No one has joined yet."}</div>`;
+}
+async function load() {
+  try {
+    const [u, j] = await Promise.all([fetch(FB + "/users.json").then(r => r.json()), fetch(FB + "/joins.json").then(r => r.json())]);
+    USERS = u || {}; JOINS = j || {}; render();
+  } catch (e) { $("#list").innerHTML = '<div class="empty">Could not load the list. Check your internet and Firebase rules.</div>'; }
+}
+if (!isOwner) { $("#lock").hidden = false; }
+else {
+  $("#dash").hidden = false;
+  load(); timer = setInterval(load, 20000);
+  $("#rf").addEventListener("click", load);
+  $("#q").addEventListener("input", e => { query = e.target.value; render(); });
+  $("#csv").addEventListener("click", () => {
+    const head = ["Name", "Username", "Country", "Joined", "Last seen", "Visits", "Language", "Premium", "Phone shared", "Telegram ID"];
+    const q = v => '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"';
+    const lines = [head.map(q).join(",")].concat(rows().map(r => [r.name, r.username ? "@" + r.username : "", r.country, fmt(r.joined), fmt(r.lastSeen), r.visits || 0, r.lang, r.premium ? "yes" : "no", r.sharedContact ? "yes" : "no", r.key].map(q).join(",")));
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob(["\ufeff" + lines.join("\n")], { type: "text/csv" }));
+    a.download = "users.csv"; document.body.appendChild(a); a.click(); a.remove();
+  });
+}
+</script>
+</body>
+</html>
